@@ -78,5 +78,19 @@ class Database_sqlite(Database):
 
 
 class Database_mysql(Database):
-    def __init__(self, *arg, **kwarg):
+    def __init__(self, *arg, defaultsFile=None, **kwarg):
+        if not defaultsFile: raise Exception(f'defaultsFile must be given')
+        self.defaultsFile = defaultsFile.resolve()
         Database.__init__(self, *arg, **kwarg)
+
+    def dump(self):
+        name, defaultsFile = self.name, self.defaultsFile
+        cmd = ["mysqldump", f'--defaults-file={defaultsFile}', name]
+
+        p = Pipe(cmd)
+        if p.status: raise Exception(f"mysqldump failed (status = {p.status}). Error message:\n{p.stderr}")
+        return p.stdout
+
+    def recreateFromSQL(self, inp):
+        name, defaultsFile = self.name, self.defaultsFile
+        print(inp)

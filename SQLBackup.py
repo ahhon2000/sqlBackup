@@ -11,6 +11,7 @@ class SQLBackup:
     def __init__(self,
         dbpath = None,
         dbtype = None,
+        defaultsFile = None,
         dirBackup = None,
         daysToKeepBackups = 30,
     ):
@@ -28,8 +29,11 @@ class SQLBackup:
         if daysToKeepBackups <= 0: raise Exception(f'daysToKeepBackups must be non-negative')
 
         self.dirBackup = Path(dirBackup).resolve()
+
         self.dbtype = dbtype
-        self.dbpath = Path(dbpath).resolve()
+        self.defaultsFile = defaultsFile
+        self.dbpath = Path(dbpath).resolve() if dbtype == 'sqlite' else dbpath
+
         self.daysToKeepBackups = daysToKeepBackups
 
     def fileIsDb(self, f):
@@ -80,8 +84,10 @@ class SQLBackup:
                 db = Database_sqlite(name=f.stem, dbpath=f)
                 yield db
         elif dbtype == 'mysql':
-            if not isinstance(dbpath, str): raise Exception(f'dpath is not a string: {dbpath}')
-            for db in (Database_mysql(name=dpath),):
+            if not isinstance(dbpath, str): raise Exception(f'dbpath is not a string: {dbpath}')
+            for db in (
+                Database_mysql(name=dbpath, defaultsFile=self.defaultsFile),
+            ):
                 yield db
         else: raise Exception(f'unsupported db type: {dbtype}')
 

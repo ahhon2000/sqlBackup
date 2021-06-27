@@ -37,7 +37,7 @@ class RemoteStorage:
         ]
 
         p = Pipe(cmd)
-        if p.status: raise Exception(f'remote ls failed (status={p.status})')
+        if p.status: raise Exception(f'remote ls failed (status={p.status}): Error message:\n{p.stderr}')
 
         matchesPrefixes = lambda f: not prefixes or any(
             re.search(r'^' + fnPrefix, f.stem) for fnPrefix in prefixes

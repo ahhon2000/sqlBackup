@@ -74,7 +74,7 @@ class SQLBackup:
                 fs = (dbpath,)
 
             for f in fs:
-                db = Database_sqlite(name=f.stem, dbpath=fscr)
+                db = Database_sqlite(name=f.stem, dbpath=f)
                 yield db
         elif dbtype == 'mysql':
             if not isinstance(dbpath, str): raise Exception(f'dpath is not a string: {dbpath}')

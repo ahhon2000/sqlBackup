@@ -1,5 +1,6 @@
 from pathlib import Path
 import sys, os
+import shutil
 
 from EasyPipe import Pipe
 
@@ -61,9 +62,13 @@ class Database_sqlite(Database):
         if p.status: raise Exception(f"sqlite3 failed (status = {p.status})")
         return p.stdout
 
-    def recreateFromSQL(self, inp):
+    def recreateFromSQL(self, inp, keepBakFile=True):
         dbpath = self.dbpath
-        if dbpath.exists(): dbpath.unlink()
+        if dbpath.exists():
+            if keepBakFile:
+                f0bak = str(dbpath) + '.bak'
+                shutil.copy(str(dbpath), f0bak)
+            dbpath.unlink()
 
         p = Pipe(['sqlite3', str(dbpath)], stdin=inp)
         if p.stderr:

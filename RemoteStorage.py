@@ -25,6 +25,7 @@ class RemoteStorage:
         self.remote_user = remote_user
         self.key_file = key_file
         self.remote_dir = remote_dir
+        self.local_dir = local_dir
 
         self.ssh_cmd_base = ssh_cmd_base = ['ssh', '-i', key_file]
         self.ssh_cmd = ssh_cmd = ssh_cmd_base + [remote_user + '@' + server]
@@ -79,10 +80,10 @@ class RemoteStorage:
         print('    rsync command:', cmd)
         p = Pipe(cmd)
 
-    def downloadBackups(self, srcDir, dstDir,
-        prefixes=None, cbAfterEachDL=None,
-    ):
-        fs = getLatestRemoteFiles(srcDir, prefixes=prefixes)
+    def downloadBackups(self, prefixes=None, cbAfterEachDL=None):
+        srcDir = self.remote_dir
+        dstDir = self.local_dir
+        fs = self.getLatestRemoteFiles(srcDir, prefixes=prefixes)
         if not fs: raise Exception('no backups found')
 
         dstDir.mkdir(parents=True, exist_ok=True)

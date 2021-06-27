@@ -93,4 +93,7 @@ class Database_mysql(Database):
 
     def recreateFromSQL(self, inp):
         name, defaultsFile = self.name, self.defaultsFile
-        print(inp)
+        cmd = ["mysql", f'--defaults-file={defaultsFile}', name]
+
+        p = Pipe(cmd, stdin=inp)
+        if p.status: raise Exception(f"mysql failed (status = {p.status}). Error message:\n{p.stderr}")

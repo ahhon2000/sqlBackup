@@ -9,7 +9,6 @@ class Database:
 
 class Database_sqlite(Database):
     def __init__(self, *arg, dbpath=None, **kwarg):
-        if not isinstance(dbpath, str): raise Exception(f'dbpath is not a string')
         self.dbpath = dbpath
         Database.__init__(self, *arg, **kwarg)
 

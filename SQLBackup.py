@@ -63,7 +63,7 @@ class SQLBackup:
         if dbtype == 'sqlite':
             fs = None
             if dbpath.is_dir():
-                filter(
+                fs = filter(
                     self.fileIsDb,
                     map(
                         lambda f: dbpath / f,

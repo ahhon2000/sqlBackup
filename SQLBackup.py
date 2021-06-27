@@ -25,9 +25,12 @@ class SQLBackup:
         if dbtype not in ('sqlite', 'mysql'):
             raise Exception(f'unsupported dbtype: {dbtype}')
 
+        if daysToKeepBackups <= 0: raise Exception(f'daysToKeepBackups must be non-negative')
+
         self.dirBackup = Path(dirBackup).resolve()
         self.dbtype = dbtype
         self.dbpath = Path(dbpath).resolve()
+        self.daysToKeepBackups = daysToKeepBackups
 
     def fileIsDb(self, f):
         return f.is_file()  and  f.suffix == '.db'  and  f.stem[0] != '.'
